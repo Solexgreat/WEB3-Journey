@@ -8,21 +8,21 @@ contract fundMe {
 
     using  PriceConverter for uint256;
 
-    uint256 public miniUSD = 5e18;
+    uint256 public constant MINIMUM_USD = 5e18;
 
     address[] public  fundersAddress;
 
     mapping(address fundersAddress => uint256 amountFunded) public addressToAmountFunded;
 
-    address public owner;
+    address public immutable i_owner;
 
     constructor () {
-        owner = msg.sender; // deployer of the contract
+        i_owner = msg.sender; // deployer of the contract
     }
 
     function fund() public payable {
 
-        require(msg.value.getConversion() >= miniUSD, "Didn't send enough ETH");
+        require(msg.value.getConversion() >= MINIMUM_USD, "Didn't send enough ETH");
         fundersAddress.push(msg.sender);
         addressToAmountFunded[msg.sender] += msg.value;
     }
@@ -49,7 +49,7 @@ contract fundMe {
     }
 
     modifier  onlyOwner() {
-        require(msg.sender == owner, "mst be the owner");
+        require(msg.sender == i_owner, "mst be the owner");
         _;
     }
 
